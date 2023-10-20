@@ -24,3 +24,4 @@ function getNumberFromString(str) {
   return +num;
 }
 
+
