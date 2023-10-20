@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { getRandomInteger, createRandomIdFromRangeGenerator, getRandomCommentMessage, getRandomCommentName } from './util';
+import { getRandomInteger, createRandomIdFromRangeGenerator, getRandomCommentMessage, getRandomCommentName } from './util.js';
 let currentId = 1;
 
 const generateCommentId = createRandomIdFromRangeGenerator(0, 1000);
