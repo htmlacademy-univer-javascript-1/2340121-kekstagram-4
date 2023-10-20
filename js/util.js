@@ -1,4 +1,4 @@
-import {commentMessages, commentNames} from './util-data';
+import {commentMessages, commentNames} from './util-data.js';
 
 function getRandomInteger (min, max) {
   const lower = Math.ceil(Math.min(Math.abs(min), Math.abs(max)));
