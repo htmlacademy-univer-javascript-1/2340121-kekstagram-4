@@ -19,6 +19,8 @@ const createPost = () => ({
   comments: Array.from({length: getRandomInteger(0, 30)}, createComment),
 });
 
-function create25Posts() {
-  return Array.from({length: 25}, createPost);
+function createPosts(n) {
+  return Array.from({length: n}, createPost);
 }
+
+export {createPosts};
