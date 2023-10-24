@@ -1,4 +1,5 @@
 import {createPosts} from './main.js';
+import {openPicture} from './pictures-opener.js';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const picturesContainer = document.querySelector('.pictures');
@@ -11,8 +12,13 @@ randomPosts.forEach(({url, description, likes, comments}) => {
   picture.querySelector('img').alt = description;
   picture.querySelector('.picture__likes').textContent = likes;
   picture.querySelector('.picture__comments').textContent = comments.length;
+  picture.addEventListener('click', (evt) => {
+    openPicture(evt, url, description, likes, comments);
+  });
   picturesFragment.append(picture);
 });
 
 picturesContainer.append(picturesFragment);
+
+export {randomPosts};
 
