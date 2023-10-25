@@ -10,6 +10,12 @@
   font-display: swap;
 }
 
+.img-upload__error {
+  padding-bottom: 10px;
+  color: red;
+  font-size: 12px;
+}
+
 @font-face {
   font-family: "Open Sans";
   src: url("../fonts/OpenSans-Regular.woff2") format("woff2"),
