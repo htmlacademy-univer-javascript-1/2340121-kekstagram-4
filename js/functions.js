@@ -34,3 +34,4 @@ function checkMeetingAccuracy(dayBegin, dayEnd, meetingBegin, duration) {
   return dayBeginMinutes <= meetingBeginMinutes && meetingBeginMinutes + duration <= dayEndMinutes;
 }
 
+export {getNumberFromString};
