@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import {getNumberFromString} from './functions.js';
+import { sendData } from './data-loader.js';
 
 const uploadForm = document.querySelector('.img-upload__form');
 const uploadInput = uploadForm.querySelector('.img-upload__input');
@@ -14,6 +15,7 @@ const scaleValue = uploadForm.querySelector('.scale__control--value');
 const previewPicture = uploadForm.querySelector('.img-upload__preview img');
 const slider = uploadForm.querySelector('.effect-level__slider');
 const effectLevelValue = uploadForm.querySelector('.effect-level__value');
+const sliderContainer = uploadForm.querySelector('.img-upload__effect-level');
 
 
 //---------------------- Validation --------------------------
@@ -83,26 +85,35 @@ pristine.addValidator(
 
 //----------- Switching keydown event on body based on focusing/unfocusing fiels -------------
 
-hashtagsField.addEventListener('onfocus', (evt) => {
-  document.body.removeEventListener('keydown', onDocumentKeydown);
+hashtagsField.addEventListener('focus', (evt) => {
+  document.removeEventListener('keydown', onDocumentKeydown);
 });
 
-hashtagsField.addEventListener('onfocusout', (evt) => {
-  document.body.addEventListener('keydown', onDocumentKeydown);
+hashtagsField.addEventListener('focusout', (evt) => {
+  document.addEventListener('keydown', onDocumentKeydown);
 });
 
-descriptionField.addEventListener('onfocus', (evt) => {
-  document.body.removeEventListener('keydown', onDocumentKeydown);
+descriptionField.addEventListener('focus', (evt) => {
+  document.removeEventListener('keydown', onDocumentKeydown);
 });
 
-descriptionField.addEventListener('onfocusout', (evt) => {
-  document.body.addEventListener('keydown', onDocumentKeydown);
+descriptionField.addEventListener('focusout', (evt) => {
+  document.addEventListener('keydown', onDocumentKeydown);
 });
 
 //--------- End switching ---------------------------------------------------------------------
 
 
 //--------- Opening and closing overlay ----------
+function hideOverlay() {
+  imgOverlay.classList.add('hidden');
+  document.removeEventListener('keydown', onDocumentKeydown);
+}
+
+function showOverlay() {
+  imgOverlay.classList.remove('hidden');
+  document.addEventListener('keydown', onDocumentKeydown);
+}
 
 function openOverlay(evt) {
   setDefaultScale();
@@ -122,6 +133,10 @@ function closeOverlay(evt) {
   document.removeEventListener('keydown', onDocumentKeydown);
   uploadInput.addEventListener('ckick', openOverlay);
   uploadInput.value = null;
+  setDefaultFilter();
+  setDefaultScale();
+  hashtagsField.textContent = '';
+  descriptionField.textContent = '';
 }
 
 uploadInput.addEventListener('change', openOverlay);
@@ -173,7 +188,7 @@ noUiSlider.create(slider, {
   format: {
     to: function (value) {
       if (Number.isInteger(value)) {
-        return value.toFixed(0);
+        return value;
       }
       return value.toFixed(1);
     },
@@ -185,16 +200,14 @@ noUiSlider.create(slider, {
 
 function setDefaultFilter() {
   previewPicture.style.filter = 'none';
-  slider.noUiSlider.set(0);
+  sliderContainer.style.display = 'none';
 }
 
 function onFilterClick(evt) {
   const effect = evt.target.value;
   setDefaultFilter();
-  if (effect === 'none') {
-    slider.setAttribute('disabled', true);
-  } else {
-    slider.removeAttribute('disabled');
+  if (effect !== 'none') {
+    sliderContainer.style.display = 'block';
   }
   switch (effect) {
     case 'chrome':
@@ -203,9 +216,10 @@ function onFilterClick(evt) {
           min: 0,
           max: 1,
         },
-        start: 0,
+        start: 1,
         step: 0.1
       });
+      slider.noUiSlider.set(1);
       break;
     case 'sepia':
       slider.noUiSlider.updateOptions({
@@ -213,9 +227,10 @@ function onFilterClick(evt) {
           min: 0,
           max: 1,
         },
-        start: 0,
+        start: 1,
         step: 0.1
       });
+      slider.noUiSlider.set(1);
       break;
     case 'marvin':
       slider.noUiSlider.updateOptions({
@@ -223,9 +238,10 @@ function onFilterClick(evt) {
           min: 0,
           max: 100,
         },
-        start: 0,
+        start: 100,
         step: 1
       });
+      slider.noUiSlider.set(100);
       break;
     case 'phobos':
       slider.noUiSlider.updateOptions({
@@ -233,9 +249,10 @@ function onFilterClick(evt) {
           min: 0,
           max: 3,
         },
-        start: 0,
+        start: 3,
         step: 0.1
       });
+      slider.noUiSlider.set(3);
       break;
     case 'heat':
       slider.noUiSlider.updateOptions({
@@ -243,10 +260,10 @@ function onFilterClick(evt) {
           min: 1,
           max: 3,
         },
-        start: 1,
+        start: 3,
         step: 0.1
       });
-      slider.noUiSlider.set(1);
+      slider.noUiSlider.set(3);
       break;
   }
 }
@@ -279,18 +296,38 @@ document.querySelectorAll('.effects__radio').forEach((li) => {
 
 //----------- End filtering ----------------------
 
+const blockSubmitButton = () => {
+  uploadButton.disabled = true;
+  uploadButton.textContent = 'Публикуем...';
+};
 
-function onFormSubmiit(evt) {
-  evt.preventDefault();
-  uploadButton.setAttribute('disabled', true);
-  const valid = pristine.validate();
-  if (valid) {
-    evt.target.submit();
-  }
-  uploadButton.removeAttribute('disabled');
-}
+const unblockSubmitButton = () => {
+  uploadButton.disabled = false;
+  uploadButton.textContent = 'Опубликовать';
+};
 
+const setUserFormSubmit = (onSuccess, onError) => {
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      sendData(new FormData(evt.target))
+        .then(() => {
+          onSuccess();
+          closeOverlay();
+        })
+        .catch(() => {
+          onError();
+          hideOverlay();
+        })
+        .finally(() => {
+          unblockSubmitButton();
+        });
+    }
+  });
+};
 
-uploadForm.addEventListener('submit', onFormSubmiit);
+export{setUserFormSubmit, showOverlay};
 
 
