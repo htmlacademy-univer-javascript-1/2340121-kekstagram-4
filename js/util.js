@@ -39,4 +39,31 @@ function getRandomCommentName() {
   return commentNames[getRandomInteger(0, commentNames.length - 1)];
 }
 
-export {getRandomInteger, createRandomIdFromRangeGenerator, getRandomCommentMessage, getRandomCommentName};
+let currentId = 1;
+
+const generateCommentId = createRandomIdFromRangeGenerator(0, 1000);
+
+function createComment() {
+  return {
+    id: generateCommentId(),
+    avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
+    message: getRandomCommentMessage(),
+    name: getRandomCommentName(),
+  };
+}
+
+function createPost() {
+  return {
+    id: currentId,
+    url: `photos/${currentId++}.jpg`,
+    description: 'ОПИСАНИЕ',
+    likes: getRandomInteger(15, 200),
+    comments: Array.from({length: getRandomInteger(0, 30)}, createComment),
+  };
+}
+
+function createPosts(n) {
+  return Array.from({length: n}, createPost);
+}
+
+export {getRandomInteger, createRandomIdFromRangeGenerator, getRandomCommentMessage, getRandomCommentName, createPosts};

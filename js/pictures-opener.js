@@ -1,4 +1,5 @@
 const commentTemplate = document.querySelector('.social__comment');
+const commentsLoader = document.querySelector('.comments-loader');
 
 const onDocumentKeydown = (evt) => {
   if (evt.key === 'Escape') {
@@ -9,10 +10,16 @@ const onDocumentKeydown = (evt) => {
 const showNextComments = () => {
   let currentComment = document.querySelector('.social__comment.hidden');
   let i = 0;
-  for (; i < 5 && currentComment !== null; i++) {
+  for (; i < 5; i++) {
+    if (currentComment === null) {
+      commentsLoader.classList.add('hidden');
+      break;
+    }
     currentComment.classList.remove('hidden');
     currentComment = currentComment.nextElementSibling;
   }
+
+
   document.querySelector('.loaded-comments-count').textContent = +document.querySelector('.loaded-comments-count').textContent + i;
 };
 
@@ -57,6 +64,7 @@ function closePicture(evt) {
   evt.target.removeEventListener('click', closePicture);
   document.removeEventListener('keydown', onDocumentKeydown);
   document.querySelector('.social__comments-loader').removeEventListener('click', showNextComments);
+  commentsLoader.classList.remove('hidden');
 }
 
 export {openPicture};
