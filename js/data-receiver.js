@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { getData } from './data-loader.js';
 import { renderPictures } from './pictures-drawer.js';
+import { showFilter, setFilterClick} from './filter.js';
+import { debounce } from './util.js';
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -26,7 +28,12 @@ const showAlert = (message) => {
 const setDataFromServer = () => {
   getData()
     .then((pictures) => {
+      showFilter();
       renderPictures(pictures);
+      setFilterClick(debounce(
+        () => renderPictures(pictures),
+        500,
+      ));
     })
     .catch((error) => {
       showAlert(error.message);

@@ -66,4 +66,24 @@ function createPosts(n) {
   return Array.from({length: n}, createPost);
 }
 
-export {getRandomInteger, createRandomIdFromRangeGenerator, getRandomCommentMessage, getRandomCommentName, createPosts};
+function debounce (callback, timeoutDelay = 500) {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
+function shuffle(arr){
+  let j, temp;
+  for(let i = arr.length - 1; i > 0; i--){
+    j = Math.floor(Math.random()*(i + 1));
+    temp = arr[j];
+    arr[j] = arr[i];
+    arr[i] = temp;
+  }
+  return arr;
+}
+
+export {getRandomInteger, createRandomIdFromRangeGenerator, getRandomCommentMessage, getRandomCommentName, createPosts, debounce, shuffle};
