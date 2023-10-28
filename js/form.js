@@ -296,6 +296,15 @@ document.querySelectorAll('.effects__radio').forEach((li) => {
 
 //----------- End filtering ----------------------
 
+function addPicture() {
+  const picture = document.querySelector('#picture').content.querySelector('.picture').cloneNode(false);
+  const newImg = previewPicture.cloneNode(true);
+  newImg.height = '182';
+  newImg.width = '182';
+  picture.append(newImg);
+  document.querySelector('.pictures.container').append(picture);
+}
+
 const blockSubmitButton = () => {
   uploadButton.disabled = true;
   uploadButton.textContent = 'Публикуем...';
@@ -315,6 +324,7 @@ const setUserFormSubmit = (onSuccess, onError) => {
       sendData(new FormData(evt.target))
         .then(() => {
           onSuccess();
+          addPicture();
           closeOverlay();
         })
         .catch(() => {
